@@ -1,0 +1,7 @@
+# outputs
+**/*.out
+**/*.o
+
+# folders
+traces
+tmp_src/
