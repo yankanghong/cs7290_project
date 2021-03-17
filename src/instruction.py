@@ -1,9 +1,8 @@
 import numpy as np
 
-class Instruction:
+class Instruction():
     """
         Instruction class
-
         Fields:
         - pc
         - is branch & branch taken:
@@ -25,13 +24,18 @@ class Instruction:
             self.dest_mem = np.zeros(num_dest, dtype=np.uint64)
             self.src_mem = np.zeros(num_src, dtype=np.uint64)
         else:
-            self.pc = trace_instr[0][0]
-            self.is_br = trace_instr[0][1]
-            self.br_tk = trace_instr[0][2]
-            self.dest_reg = np.array(trace_instr[0][3:3+num_dest])
-            self.src_reg = np.array(trace_instr[0][3+num_dest:3+num_dest+num_src])
-            self.dest_mem = np.array(trace_instr[0][3+num_dest+num_src:3+2*num_dest+num_src])
-            self.src_mem = np.array(trace_instr[0][3+2*num_dest+num_src:])
+            self.pc = trace_instr[0]
+            self.is_br = trace_instr[1]
+            self.br_tk = trace_instr[2]
+            self.dest_reg = np.array(
+                trace_instr[3:3+num_dest], dtype=np.uint8)
+            self.src_reg = np.array(
+                trace_instr[3+num_dest:3+num_dest+num_src], dtype=np.uint8)
+            self.dest_mem = trace_instr[3+num_dest+num_src]
+            self.src_mem = trace_instr[4+num_dest+num_src]
+        
+        self.is_ld = np.any(self.src_mem)
+        self.is_st = np.any(self.dest_mem)
 
     def print_instr(self):
         print("PC:"+str(self.pc)+", is branch:"+str(self.is_br) +
@@ -40,8 +44,8 @@ class Instruction:
         print(self.dest_reg)
         print("src_reg:")
         print(self.src_reg)
-        print("dest_mem:")
+        print("is_st: "+str(self.is_st) + ", dest_mem:")
         print(self.dest_mem)
-        print("src_mem:")
+        print("is_ld: "+str(self.is_ld) + ", src_mem:")
         print(self.src_mem)
 

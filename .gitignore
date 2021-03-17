@@ -4,4 +4,5 @@
 
 # folders
 traces
-tmp_src/
+tmp_src
+__pycache__
