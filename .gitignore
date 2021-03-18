@@ -1,8 +1,12 @@
+# 
+.DS_Store
+
 # outputs
 **/*.out
 **/*.o
 
 # folders
-traces
+traces/dpc3_traces
+traces/outputs
 tmp_src
 __pycache__
