@@ -63,7 +63,7 @@ public:
             source_memory[i] = 0;
         }
 
-        for (uint32_t i=0; i<NUM_INSTR_DESTINATIONS_SPARC; i++) {
+        for (uint32_t i=0; i<NUM_INSTR_DESTINATIONS; i++) {
             destination_registers[i] = 0;
             destination_memory[i] = 0;
         }
@@ -71,7 +71,7 @@ public:
 
     void print_instr(){
         // instruction pointer or PC (Program Counter)
-        printf("PC: %llu\n", ip);
+        std::cout<<"PC: "<< ip<<std::endl;
 
         // branch info
         std::cout<< "is_branch: "<< static_cast<uint>(is_branch)<<std::endl;
@@ -194,7 +194,7 @@ public:
     }
 
     void print_queue() {
-        printf("Queue valid elem: %lu\n", inner_queue.size());
+        std::cout<<"Queue valid elem: " << inner_queue.size() << "\n";
         for (auto it = inner_queue.begin(); it != inner_queue.end(); it++) {
             std::cout<< "The " <<it->first << "th instruction, detail: ";
             it->second.print_instr();
