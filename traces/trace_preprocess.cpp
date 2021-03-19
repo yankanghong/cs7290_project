@@ -5,16 +5,29 @@
 
 using namespace std;    
 
-// translate queue context into vector
+// translate queue context into data vector
 void IWQ::to_vector() {
+
+    srand(time(NULL));
+    bool mem_depend(false);
+
     auto last_ld = inner_queue.crbegin()->second;
     std::vector<uint64_t> *new_data = new std::vector<uint64_t>;
     std::vector<bool> *new_label = new std::vector<bool>;
 
     for (auto it=inner_queue.cbegin(); it != inner_queue.cend(); it++) {
+        mem_depend = last_ld.check_mem_depend(it->second);
+        
+        /* Having a random filtering mechanism to filter out 
+        some no dependency vector to reduce the data size
+           Only filter out those no-dependency
+        */
+        if (!mem_depend && ((rand() % (100)) < int(FILTER_PROB*100))) 
+            continue;
         new_data->push_back(it->second.ip);
-        new_label->push_back(last_ld.check_mem_depend(it->second));
+        new_label->push_back(mem_depend);
     }
+
     uint vec_size = new_data->size();
     for (uint i=0; i<queue_size-vec_size; i++) {
         new_data->push_back(0); // pad 0

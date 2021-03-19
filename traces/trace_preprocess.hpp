@@ -39,6 +39,10 @@
 #define BRANCH_RETURN        6
 #define BRANCH_OTHER         7
 
+// Filtering mechanism for IWQ class
+#define FILTER_PROB 0.5 // percentage to pass
+
+
 class INSTRUCTION {
 public:
 
@@ -131,8 +135,9 @@ public:
     }
 
     // check if memory dependency exist, input would be a store instruction
+    // an instruction can have both LD and ST attribute
     bool check_mem_depend(INSTRUCTION store) {
-        if (!is_st())
+        if (!is_ld()) // return false if the instruction itself is not LD
             return false;
 
         for (uint i=0; i<NUM_INSTR_SOURCES; i++) {
@@ -212,6 +217,6 @@ public:
     // print out the data and label to ostream
     void output_to_file(std::ofstream &dos, std::ofstream &los);
 
-    // translate the data into vector
+    // translate the queue into data vector
     void to_vector();
 };

@@ -6,8 +6,8 @@ CC=g++
 OBJECTS=main.to trace_preprocess.to 
 
 all: trpr.o outputs_dir 
-	mv *.to outputs
-	@echo compile done...
+	@mv *.to outputs
+	@echo Compile done...
 
 trpr.o: $(OBJECTS)
 	@$(CC) -o $@ $(CFLAGS) $(DEBUG) $(OBJECTS)
@@ -16,8 +16,8 @@ $(OBJECTS): %.to : %.cpp
 	@$(CC) -c $(CFLAGS) $(DEBUG) $< -o $@
 
 outputs_dir:
-	mkdir -p outputs
+	@mkdir -p outputs
 
 .PHONY: clean
 clean:
-	rm -rf  *.o *.dat *.lab outputs/
+	@rm -rf  *.o *.dat *.lab outputs/
