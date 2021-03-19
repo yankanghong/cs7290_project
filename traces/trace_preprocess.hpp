@@ -147,6 +147,7 @@ public:
     }
 };
 
+// Queue class for holding data
 class IWQ {
 public:
     const uint queue_size;

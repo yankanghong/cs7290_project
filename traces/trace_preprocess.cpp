@@ -27,17 +27,26 @@ void IWQ::to_vector() {
 
 void IWQ::output_to_file(ofstream &dos, ofstream&los) {
     // print out data size
-
+    if (data.empty())
+        return;
     assert (data.size() == label.size());
-
-    for (uint i=0; i < data.size(); i++) {
+    std::cout<< "Number of data: " << data.size() << "\n";
+    for (uint64_t i=0; i < data.size(); i++) {
         dos << "Data["<<i<<"]: ";
         los << "Label["<<i<<"]: ";
-        for (uint j=0; j<data[i]->size(); j++) {
+        for (uint64_t j=0; j<data[i]->size(); j++) {
             dos << data[i]->at(j) << " ";
             los << label[i]->at(j) << " ";
         }
         dos<<std::endl;
         los<<std::endl;
+
+        // remove elements once done
+        delete data[i];
+        delete label[i];
+
     }
+    data.clear();
+    label.clear();
+
 }
