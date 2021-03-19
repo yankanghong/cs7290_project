@@ -1,18 +1,18 @@
 DEBUG=-g -Wall
-CFLAGS=-std=c++11 -O
+CFLAGS=-std=c++11 -O3
 CC=g++
 
 # objects 
-OBJECTS=main.o trace_preprocess.o 
+OBJECTS=main.to trace_preprocess.to 
 
-all: trpr outputs_dir 
-	mv *.o outputs
+all: trpr.o outputs_dir 
+	mv *.to outputs
 	@echo compile done...
 
-trpr: $(OBJECTS)
+trpr.o: $(OBJECTS)
 	@$(CC) -o $@ $(CFLAGS) $(DEBUG) $(OBJECTS)
 
-$(OBJECTS): %.o : %.cpp
+$(OBJECTS): %.to : %.cpp
 	@$(CC) -c $(CFLAGS) $(DEBUG) $< -o $@
 
 outputs_dir:
@@ -20,4 +20,4 @@ outputs_dir:
 
 .PHONY: clean
 clean:
-	rm -rf trpr *.o *.dat *.lab outputs/
+	rm -rf  *.o *.dat *.lab outputs/
