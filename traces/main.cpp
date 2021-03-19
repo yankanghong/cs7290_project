@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
     std::cout << "Transforming trace: " << trace_name <<"\n";
     string tr_dat = out_dir+trace_name.substr(0, trace_name.find_last_of('.')) + ".dat";
     string tr_lab = out_dir+trace_name.substr(0, trace_name.find_last_of('.')) + ".lab";
+    std::cout << "Output directory " << out_dir <<"\n";
 
     string gz_command = "xz -dc " + trace_path;
     
@@ -49,23 +50,26 @@ int main(int argc, char **argv) {
     IWQ iwq(INSTRUCTION_WINDOW);
 
     // read PIN trace
-    while (fread(&trace_instr, instr_size, 1, trace_file)) {
+    while (fread(&trace_instr, 1, instr_size, trace_file)) {
         // trace_instr.print_instr();
         iwq.push(trace_instr);
         if (trace_instr.is_ld())
             iwq.to_vector();
         
         mcnt++;
-        if (mcnt == 10000000) {
+        if (mcnt == 1000000000) {
             lcnt ++;
-            std::cout << "Finish " << lcnt <<"0M instructions...\n";
+            std::cout << "Finish " << lcnt <<"B instructions...\n";
             // print lwq content 
             // iwq.print_queue(); 
             // iwq.data_size(); 
-            // iwq.output_to_file(dos, los); 
+            iwq.output_to_file(dos, los); 
             mcnt = 0;
+            // break;
         }
+
     }
+    printf("Done reading traces, generate output...\n");
     iwq.output_to_file(dos, los);
     pclose(trace_file);
     dos.close();
