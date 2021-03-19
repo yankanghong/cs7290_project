@@ -57,8 +57,7 @@ int main(int argc, char **argv) {
             iwq.to_vector();
         
         mcnt++;
-        // if (mcnt == 1000000000) {
-        if (mcnt == 1000000) {
+        if (mcnt == 1000000000) {
             lcnt ++;
             std::cout << "Finish " << lcnt <<"B instructions...\n";
             // print lwq content 
@@ -66,7 +65,7 @@ int main(int argc, char **argv) {
             // iwq.data_size(); 
             iwq.output_to_file(dos, los); 
             mcnt = 0;
-            break;
+            // break;
         }
 
     }
