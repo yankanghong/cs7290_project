@@ -37,6 +37,8 @@ int main(int argc, char **argv) {
 
     string gz_command = "xz -dc " + trace_path;
     
+    srand(time(NULL));
+
     // output file
     std::ofstream dos, los;
     dos.open(tr_dat, std::ofstream::out);
@@ -44,22 +46,23 @@ int main(int argc, char **argv) {
 
     FILE *trace_file = popen( gz_command.c_str() , "r" );
     INSTRUCTION trace_instr;
-    uint instr_size = sizeof(INSTRUCTION);
+    uint instr_size = sizeof(SINST);
     int lcnt(0), mcnt(0);
 
     IWQ iwq(INSTRUCTION_WINDOW);
 
     // read PIN trace
-    while (fread(&trace_instr, 1, instr_size, trace_file)) {
+    while (fread(&(trace_instr.instr), 1, instr_size, trace_file)) {
         // trace_instr.print_instr();
+        trace_instr.set_attr();
         iwq.push(trace_instr);
         if (trace_instr.is_ld())
             iwq.to_vector();
         
         mcnt++;
-        if (mcnt == 1000000000) {
+        if (mcnt == 10000000) {
             lcnt ++;
-            std::cout << "Finish " << lcnt <<"B instructions...\n";
+            std::cout << "Finish " << lcnt <<"0M instructions...\n";
             // print lwq content 
             // iwq.print_queue(); 
             // iwq.data_size(); 

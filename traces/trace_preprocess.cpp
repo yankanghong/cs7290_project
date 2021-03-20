@@ -8,7 +8,6 @@ using namespace std;
 // translate queue context into data vector
 void IWQ::to_vector() {
 
-    srand(time(NULL));
     bool mem_depend(false);
 
     auto last_ld = inner_queue.crbegin()->second;
@@ -22,9 +21,9 @@ void IWQ::to_vector() {
         some no dependency vector to reduce the data size
            Only filter out those no-dependency
         */
-        if (!mem_depend && ((rand() % (100)) < int(FILTER_PROB*100))) 
-            continue;
-        new_data->push_back(it->second.ip);
+        // if (!mem_depend && ((rand() % (100)) < int(FILTER_PROB*100))) 
+            // continue;
+        new_data->push_back(it->second.instr.ip);
         new_label->push_back(mem_depend);
     }
 

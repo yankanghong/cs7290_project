@@ -44,10 +44,8 @@
 // Filtering mechanism for IWQ class
 #define FILTER_PROB 0.1 // percentage to pass
 
-
-class INSTRUCTION {
-public:
-
+// based Instruction type
+struct SINST {
     // instruction pointer or PC (Program Counter)
     uint64_t ip;
 
@@ -62,7 +60,7 @@ public:
     uint64_t source_memory[NUM_INSTR_SOURCES]; // input memory
 
     // constructor
-    INSTRUCTION():ip(0), is_branch(0), branch_taken(0) {
+    SINST():ip(0), is_branch(0), branch_taken(0) {
 
         for (uint32_t i=0; i<NUM_INSTR_SOURCES; i++) {
             source_registers[i] = 0;
@@ -73,83 +71,87 @@ public:
             destination_registers[i] = 0;
             destination_memory[i] = 0;
         }
-    };
+    };        
+};
+
+class INSTRUCTION {
+public:
+
+    // instruction itself
+    SINST instr;
+
+    // high-level information
+    bool isLD;
+    bool isST;
+
+    // constructor
+    INSTRUCTION():instr(), isLD(false), isST(false) {};
 
     void print_instr(){
         // instruction pointer or PC (Program Counter)
-        std::cout<<"PC: "<< ip<<std::endl;
+        std::cout<<"PC: "<< instr.ip<<std::endl;
 
         // branch info
-        std::cout<< "is_branch: "<< static_cast<uint>(is_branch)<<std::endl;
-        std::cout<< "branch_taken: "<< static_cast<uint>(branch_taken)<<std::endl;
+        std::cout<< "is_branch: "<< static_cast<uint>(instr.is_branch)<<std::endl;
+        std::cout<< "branch_taken: "<< static_cast<uint>(instr.branch_taken)<<std::endl;
 
         std::cout<< "dest regs:";
         for (uint i=0; i<NUM_INSTR_DESTINATIONS; i++)
-            std::cout<< " " << uint(destination_registers[i]); // output registers
+            std::cout<< " " << uint(instr.destination_registers[i]); // output registers
         std::cout<<std::endl;
 
         std::cout<< "src regs:";
         for (uint i=0; i<NUM_INSTR_SOURCES; i++)
-            std::cout<< " " << uint(source_registers[i]); // input registers
+            std::cout<< " " << uint(instr.source_registers[i]); // input registers
         std::cout<<std::endl;        
 
         std::cout<< "dest mem:";
         for (uint i=0; i<NUM_INSTR_DESTINATIONS; i++)
-            std::cout<< " " << destination_memory[i]; // output memory
+            std::cout<< " " << instr.destination_memory[i]; // output memory
         std::cout<<std::endl;   
 
         std::cout<< "src mem:";
         for (uint i=0; i<NUM_INSTR_SOURCES; i++)
-            std::cout<< " " << source_memory[i]; // input memory
+            std::cout<< " " << instr.source_memory[i]; // input memory
         std::cout<<std::endl;   
 
         // std::cout << "asid0: "<< static_cast<uint>(asid[0])<<std::endl;
         // std::cout<< "asid1: "<< static_cast<uint>(asid[1])<<std::endl;
     }
 
-    // check if an instruction is load
-    bool is_ld(){
+    // setup high-level attribute based on instr
+    void set_attr() {
         for (uint i=0; i<NUM_INSTR_SOURCES; i++)
-            if (source_memory[i] != 0)
-                return true;
-        
-        return false;
-    }     
+            if (instr.source_memory[i] != 0)
+                isLD = true;
+
+        for (uint i=0; i<NUM_INSTR_DESTINATIONS; i++)
+            if (instr.destination_memory[i] != 0)
+                isST = true;
+    }
+
+    // check if an instruction is load
+    bool is_ld(){return isLD;}     
 
     // check if an instruction is store
-    bool is_st(){
-        for (uint i=0; i<NUM_INSTR_DESTINATIONS; i++)
-            if (destination_memory[i] != 0)
-                return true;
-        
-        return false;
-    }   
+    bool is_st(){return isST;}   
+
     // check is an instruction is mem instr
-    bool is_mem(){
-        for (uint i=0; i<NUM_INSTR_SOURCES; i++)
-            if (source_memory[i] != 0)
-                return true;  
-        for (uint i=0; i<NUM_INSTR_DESTINATIONS; i++)
-            if (destination_memory[i] != 0)
-                return true;
-        
-        return false;                      
-    }
+    bool is_mem(){ return (isLD || isST);}
 
     // check if memory dependency exist, input would be a store instruction
     // an instruction can have both LD and ST attribute
     bool check_mem_depend(INSTRUCTION store) {
-        if (!is_ld()) // return false if the instruction itself is not LD
+        if (!isLD) // return false if the instruction itself is not LD
             return false;
 
         for (uint i=0; i<NUM_INSTR_SOURCES; i++) {
-            if (source_memory[i] == 0)
+            if (instr.source_memory[i] == 0)
                 continue;
             for (uint j=0; j<NUM_INSTR_DESTINATIONS; j++)
-                if (source_memory[i] == store.destination_memory[j])
+                if (instr.source_memory[i] == store.instr.destination_memory[j])
                     return true;
         }
-
         return false;
     }
 };
