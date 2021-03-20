@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <string.h>
 #include <inttypes.h>
+#include <time.h>
+
 #include <iostream>
 #include <fstream>
 #include <list>
@@ -40,7 +42,7 @@
 #define BRANCH_OTHER         7
 
 // Filtering mechanism for IWQ class
-#define FILTER_PROB 0.5 // percentage to pass
+#define FILTER_PROB 0.1 // percentage to pass
 
 
 class INSTRUCTION {
