@@ -142,7 +142,7 @@ public:
 
     // check if memory dependency exist, input would be a store instruction
     // an instruction can have both LD and ST attribute
-    bool check_mem_depend(INSTRUCTION &store) {
+    bool check_mem_depend(const INSTRUCTION &store) {
         if (!isLD) // return false if the instruction itself is not LD
             return false;
 
@@ -172,7 +172,7 @@ public:
     std::vector<std::shared_ptr<std::vector<bool>> > label;
 
     // constructor, initial an empty queue with size
-    IWQ(uint &qsize):queue_size(qsize){}
+    IWQ(uint qsize):queue_size(qsize){}
 
     // deconstructor
     // ~IWQ() {
@@ -183,7 +183,7 @@ public:
     // }
 
     // if a queue is full, it will automatically remove the head elem
-    void push(INSTRUCTION &instr){
+    void push(INSTRUCTION instr){
 
         // if not empty, need to check overflow and add counter
         if (inner_queue.size()) {
