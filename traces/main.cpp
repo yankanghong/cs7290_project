@@ -60,9 +60,9 @@ int main(int argc, char **argv) {
             iwq.to_vector();
         
         mcnt++;
-        if (mcnt == 10000000) {
+        if (mcnt == 100000000) {
             lcnt ++;
-            std::cout << "Finish " << lcnt <<"0M instructions...\n";
+            std::cout << "Finish " << lcnt <<"00M instructions...\n";
             // print lwq content 
             // iwq.print_queue(); 
             // iwq.data_size(); 

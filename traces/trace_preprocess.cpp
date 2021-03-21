@@ -11,8 +11,8 @@ void IWQ::to_vector() {
     bool mem_depend(false);
 
     auto last_ld = inner_queue.crbegin()->second;
-    std::vector<uint64_t> *new_data = new std::vector<uint64_t>;
-    std::vector<bool> *new_label = new std::vector<bool>;
+    std::shared_ptr<std::vector<uint64_t>> new_data (new std::vector<uint64_t>);
+    std::shared_ptr<std::vector<bool>> new_label (new std::vector<bool>);
 
     for (auto it=inner_queue.cbegin(); it != inner_queue.cend(); it++) {
         mem_depend = last_ld.check_mem_depend(it->second);
@@ -52,12 +52,8 @@ void IWQ::output_to_file(ofstream &dos, ofstream&los) {
         }
         dos<<std::endl;
         los<<std::endl;
-
-        // remove elements once done
-        delete data[i];
-        delete label[i];
-
     }
+    // remove data once saved to output
     data.clear();
     label.clear();
 

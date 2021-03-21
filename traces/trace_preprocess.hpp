@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <utility>
 #include <vector>
+#include <memory>
 
 
 // #define NDEBUG
@@ -141,7 +142,7 @@ public:
 
     // check if memory dependency exist, input would be a store instruction
     // an instruction can have both LD and ST attribute
-    bool check_mem_depend(INSTRUCTION store) {
+    bool check_mem_depend(INSTRUCTION &store) {
         if (!isLD) // return false if the instruction itself is not LD
             return false;
 
@@ -167,22 +168,22 @@ public:
     std::list<std::pair<uint, INSTRUCTION>> inner_queue;
 
     // vector to store data and label
-    std::vector<std::vector<uint64_t> *> data;
-    std::vector<std::vector<bool> *> label;
+    std::vector<std::shared_ptr<std::vector<uint64_t>> > data;
+    std::vector<std::shared_ptr<std::vector<bool>> > label;
 
     // constructor, initial an empty queue with size
-    IWQ(uint qsize):queue_size(qsize){}
+    IWQ(uint &qsize):queue_size(qsize){}
 
     // deconstructor
-    ~IWQ() {
-        for (auto p:data)
-            delete p;
-        for (auto p:label)
-            delete p;
-    }
+    // ~IWQ() {
+    //     for (auto p:data)
+    //         delete p;
+    //     for (auto p:label)
+    //         delete p;
+    // }
 
     // if a queue is full, it will automatically remove the head elem
-    void push(INSTRUCTION instr){
+    void push(INSTRUCTION &instr){
 
         // if not empty, need to check overflow and add counter
         if (inner_queue.size()) {
