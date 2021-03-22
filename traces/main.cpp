@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
             // iwq.data_size(); 
             iwq.output_to_file(dos, los); 
             mcnt = 0;
-            if (lcnt == 4) {
+            if (lcnt == 1) {
                 std::cout << "Done with first "<< lcnt <<"0M instructions, exit...\n";
                 break;
             }

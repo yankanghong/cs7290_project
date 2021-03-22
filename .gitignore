@@ -6,6 +6,7 @@
 **/*.o
 
 # folders
+dataset
 traces/dpc3_traces
 traces/outputs
 tmp_src
