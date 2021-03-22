@@ -13,8 +13,7 @@ cd scripts
 ```
 ### Dataset download or generate
 
-* If you want to download pre-generated dataset, ~~run `get_dataset.sh`. Adjust what dataset to download by manipulating `dataset_download_list.txt`~~
-
+* If you want to download pre-generated dataset, ~~run `get_dataset.sh`. Adjust what dataset to download by manipulating `dataset_download_list.txt`~~  
 Just access and download from [here](https://gtvault.sharepoint.com/sites/CS7290LoadStorePredictionProject/Shared%20Documents/dataset/)
 
 * If you want regenerate or customized generate dataset, run `trace_to_dataset.sh` to transform trace to training/validation data. But the **Trace download** step has to be done first.
