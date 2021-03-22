@@ -60,20 +60,23 @@ int main(int argc, char **argv) {
             iwq.to_vector();
         
         mcnt++;
-        if (mcnt == 100000000) {
+        if (mcnt == 10000000) {
             lcnt ++;
-            std::cout << "Finish " << lcnt <<"00M instructions...\n";
+            std::cout << "Finish " << lcnt <<"0M instructions...\n";
             // print lwq content 
             // iwq.print_queue(); 
             // iwq.data_size(); 
             iwq.output_to_file(dos, los); 
             mcnt = 0;
-            // break;
+            if (lcnt == 4) {
+                std::cout << "Done with first "<< lcnt <<"0M instructions, exit...\n";
+                break;
+            }
         }
 
     }
-    printf("Done reading traces, generate output...\n");
     iwq.output_to_file(dos, los);
+    printf("Done reading traces, output file %s and %s generated\n", tr_dat.c_str(), tr_lab.c_str());
     pclose(trace_file);
     dos.close();
     los.close();

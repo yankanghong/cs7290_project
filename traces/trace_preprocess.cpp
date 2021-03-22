@@ -22,7 +22,7 @@ void IWQ::to_vector() {
            Only filter out those no-dependency
         */
         // if (!mem_depend && ((rand() % (100)) < int(FILTER_PROB*100))) 
-            // continue;
+        //     continue;
         new_data->push_back(it->second.instr.ip);
         new_label->push_back(mem_depend);
     }
@@ -44,8 +44,8 @@ void IWQ::output_to_file(ofstream &dos, ofstream&los) {
     assert (data.size() == label.size());
     std::cout<< "Number of data: " << data.size() << "\n";
     for (uint64_t i=0; i < data.size(); i++) {
-        dos << "Data["<<i<<"]: ";
-        los << "Label["<<i<<"]: ";
+        // dos << "Data["<<i<<"]: ";
+        // los << "Label["<<i<<"]: ";
         for (uint64_t j=0; j<data[i]->size(); j++) {
             dos << data[i]->at(j) << " ";
             los << label[i]->at(j) << " ";

@@ -43,7 +43,7 @@
 #define BRANCH_OTHER         7
 
 // Filtering mechanism for IWQ class
-#define FILTER_PROB 0.1 // percentage to pass
+#define FILTER_PROB 0.3 // percentage to pass
 
 // based Instruction type
 struct SINST {
