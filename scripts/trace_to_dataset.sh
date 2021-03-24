@@ -47,7 +47,7 @@ targets=(
 ## Start transform
 if [ ! -d ${DATASET_DIR} ]; then
     echo "Create ${DATASET_DIR} directory..."
-    mkdir ${DATASET_DIR}
+    mkdir -p ${DATASET_DIR}
 fi
 
 # Compile trace transformer
