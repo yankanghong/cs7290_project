@@ -45,6 +45,10 @@
 // Filtering mechanism for IWQ class
 #define FILTER_PROB 0.3 // percentage to pass
 
+// default instruction window size
+#define DEFAULT_IW_SIZE 100
+
+
 // based Instruction type
 struct SINST {
     // instruction pointer or PC (Program Counter)

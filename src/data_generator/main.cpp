@@ -7,26 +7,31 @@
 using namespace std;
 
 
-#define INSTRUCTION_WINDOW 100
-
 int main(int argc, char **argv) {
     
-    string trace_path = "../traces/dpc3_traces/600.perlbench_s-210B.champsimtrace.xz";
+    string trace_path = "../data/traces/dpc3_traces/600.perlbench_s-210B.champsimtrace.xz";
     string out_dir = "./";
+
+    uint instr_window_size(DEFAULT_IW_SIZE);
+
     // get options from command line
     char c;
-    while ((c = getopt (argc, argv, "t:o:")) != -1)
-    switch(c) {
-        case 't':
-            if(optarg) trace_path = string(optarg);
-            break;
-        case 'o':
-            if(optarg) out_dir = string(optarg);
-            if (out_dir.back() != '/') out_dir += '/';
-            break;            
-        default:
-            std::cerr<< "Unknown option -"<<c<<"\n";
-            abort();        
+    while ((c = getopt (argc, argv, "t:o:w:")) != -1) {
+        switch(c) {
+            case 't':
+                if(optarg) trace_path = string(optarg);
+                break;
+            case 'o':
+                if(optarg) out_dir = string(optarg);
+                if (out_dir.back() != '/') out_dir += '/';
+                break; 
+            case 'w':
+                if (optarg) instr_window_size = atoll(optarg);    
+                break;      
+            default:
+                std::cerr<< "Unknown option -"<<c<<"\n";
+                abort();        
+        }
     }
 
     string trace_name(trace_path.substr(trace_path.find_last_of('/')+1));  
@@ -49,7 +54,7 @@ int main(int argc, char **argv) {
     uint instr_size = sizeof(SINST);
     int lcnt(0), mcnt(0);
 
-    IWQ iwq(INSTRUCTION_WINDOW);
+    IWQ iwq(instr_window_size);
 
     // read PIN trace
     while (fread(&(trace_instr.instr), 1, instr_size, trace_file)) {
@@ -76,7 +81,7 @@ int main(int argc, char **argv) {
 
     }
     iwq.output_to_file(dos, los);
-    printf("Done reading traces, output file %s and %s generated\n", tr_dat.c_str(), tr_lab.c_str());
+    printf("Done reading traces, output saves to \n %s \n %s \n", tr_dat.c_str(), tr_lab.c_str());
     pclose(trace_file);
     dos.close();
     los.close();

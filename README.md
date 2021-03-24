@@ -1,7 +1,9 @@
 # CS7290 Memory Dependency Prediction Project
 
-Some resources:
-https://github.com/ChampSim/ChampSim
+Some resources: https://github.com/ChampSim/ChampSim
+
+### Dependency
+Python 3.7, PyTorch >= 1.7, torchvision >= 0.8
 
 ## Data Preparation 
 

@@ -7,7 +7,7 @@
 
 # folders
 dataset
-traces/dpc3_traces
-traces/outputs
+data/traces/dpc3_traces
+src/data_generator/outputs
 tmp_src
 __pycache__
