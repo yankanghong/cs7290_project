@@ -46,8 +46,8 @@ int main(int argc, char **argv) {
 
     // output file
     std::ofstream dos, los;
-    dos.open(tr_dat, std::ofstream::out);
-    los.open(tr_lab, std::ofstream::out);
+    dos.open(tr_dat, std::ofstream::out | std::ios::binary);
+    los.open(tr_lab, std::ofstream::out | std::ios::binary);
 
     FILE *trace_file = popen( gz_command.c_str() , "r" );
     INSTRUCTION trace_instr;
