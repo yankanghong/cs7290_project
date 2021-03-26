@@ -19,10 +19,10 @@ cd scripts
 To generate or customized generate dataset, Use `trace_to_dataset.sh` to transform trace to training/validation data. 
 ```sh
 cd scripts
-./trace_to_dataset.sh
+./trace_to_dataset.sh [-w window_size] [-n max_instr]
 ```
 `trace_to_dataset.sh` accepts optional arguments to customize the generation of dataset:
-| Args | Meaning  | Default |
+| Args | Meaning  | Default Value |
 | :------------: |:---------------:| :---------------:| 
 | -w      | define the instruction window size (aka. the column length of generated 2D matrix data/label) | 64 |
 | -n     | maximum number of instructions before exit     |  1000000  |
