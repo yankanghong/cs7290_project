@@ -76,21 +76,22 @@ int main(int argc, char **argv) {
         if ( (mcnt%100000 == 0) && mcnt) // output to file every 0.1M instructions
             iwq.output_to_file(dos, los); 
         
-        if (mcnt == 100000000) {
+        if (mcnt == 10000000) {
             lcnt ++;
-            std::cout << "Finish " << lcnt <<"100M instructions...\n";
+            std::cout << "Finish " << lcnt <<"0M instructions...\n";
             // print lwq content 
             // iwq.print_queue(); 
             // iwq.data_size(); 
             mcnt = 0;
             if (lcnt == 1) {
-                std::cout << "Done with first "<< lcnt <<"100M instructions, exit...\n";
+                std::cout << "Done with first "<< lcnt <<"0M instructions, exit...\n";
                 break;
             }
         }
     }
+    
     iwq.output_to_file(dos, los);
-    printf("Done reading traces, output saves to \n %s \n %s \n", tr_dat.c_str(), tr_lab.c_str());
+    printf("Done reading traces, output saves to \n\t%s \n\t%s \n", tr_dat.c_str(), tr_lab.c_str());
     pclose(trace_file);
     dos.close();
     los.close();

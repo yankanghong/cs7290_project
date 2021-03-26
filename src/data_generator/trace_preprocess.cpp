@@ -44,12 +44,13 @@ void IWQ::output_to_file(ofstream &dos, ofstream&los) {
     assert (data.size() == label.size());
     // std::cout<< "Number of data: " << data.size() << "\n";
     for (uint64_t i=0; i < data.size(); i++) {
-        for (uint64_t j=0; j<data[i]->size(); j++) {
-            dos << data[i]->at(j) << " ";
-            los << label[i]->at(j) << " ";
+        for (uint64_t j=0; j<data[i]->size()-1; j++) {
+            dos << data[i]->at(j) << ", ";
+            los << label[i]->at(j) << ", ";
         }
-        dos<<std::endl;
-        los<<std::endl;
+
+        dos<< data[i]->at(data[i]->size()-1)  << std::endl;
+        los<< label[i]->at(data[i]->size()-1) << std::endl;
     }
     
     // remove data once saved to output
