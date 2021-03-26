@@ -42,10 +42,8 @@ void IWQ::output_to_file(ofstream &dos, ofstream&los) {
     if (data.empty())
         return;
     assert (data.size() == label.size());
-    std::cout<< "Number of data: " << data.size() << "\n";
+    // std::cout<< "Number of data: " << data.size() << "\n";
     for (uint64_t i=0; i < data.size(); i++) {
-        // dos << "Data["<<i<<"]: ";
-        // los << "Label["<<i<<"]: ";
         for (uint64_t j=0; j<data[i]->size(); j++) {
             dos << data[i]->at(j) << " ";
             los << label[i]->at(j) << " ";
@@ -53,6 +51,7 @@ void IWQ::output_to_file(ofstream &dos, ofstream&los) {
         dos<<std::endl;
         los<<std::endl;
     }
+    
     // remove data once saved to output
     data.clear();
     label.clear();

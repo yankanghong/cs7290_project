@@ -1,6 +1,7 @@
+
+CXX=g++
 DEBUG=-g -Wall
-CFLAGS=-std=c++11 -O3
-CC=g++
+CPPFLAGS=-std=c++11 -O3 -pthread
 
 # objects 
 OBJECTS=main.to trace_preprocess.to 
@@ -10,10 +11,10 @@ all: trpr.o outputs_dir
 	@echo Compile done...
 
 trpr.o: $(OBJECTS)
-	@$(CC) -o $@ $(CFLAGS) $(DEBUG) $(OBJECTS)
+	@$(CXX) -o $@ $(CPPFLAGS) $(DEBUG) $(OBJECTS) 
 
 $(OBJECTS): %.to : %.cpp
-	@$(CC) -c $(CFLAGS) $(DEBUG) $< -o $@
+	@$(CXX) -c $(CPPFLAGS) $(DEBUG) $< -o $@
 
 outputs_dir:
 	@mkdir -p outputs

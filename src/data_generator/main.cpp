@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <thread>
+#include <sys/types.h>
+#include <thread>
+#include <mutex>
+#include <atomic>
+
 #include "trace_preprocess.hpp"
 
 using namespace std;
@@ -9,7 +15,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
     
-    string trace_path = "../data/traces/dpc3_traces/600.perlbench_s-210B.champsimtrace.xz";
+    string trace_path = "../../data/traces/dpc3_traces/600.perlbench_s-210B.champsimtrace.xz";
     string out_dir = "./";
 
     uint instr_window_size(DEFAULT_IW_SIZE);
@@ -54,6 +60,7 @@ int main(int argc, char **argv) {
     uint instr_size = sizeof(SINST);
     int lcnt(0), mcnt(0);
 
+    // The queue class 
     IWQ iwq(instr_window_size);
 
     // read PIN trace
@@ -65,20 +72,22 @@ int main(int argc, char **argv) {
             iwq.to_vector();
         
         mcnt++;
-        if (mcnt == 10000000) {
+
+        if ( (mcnt%100000 == 0) && mcnt) // output to file every 0.1M instructions
+            iwq.output_to_file(dos, los); 
+        
+        if (mcnt == 100000000) {
             lcnt ++;
-            std::cout << "Finish " << lcnt <<"0M instructions...\n";
+            std::cout << "Finish " << lcnt <<"100M instructions...\n";
             // print lwq content 
             // iwq.print_queue(); 
             // iwq.data_size(); 
-            iwq.output_to_file(dos, los); 
             mcnt = 0;
             if (lcnt == 1) {
-                std::cout << "Done with first "<< lcnt <<"0M instructions, exit...\n";
+                std::cout << "Done with first "<< lcnt <<"100M instructions, exit...\n";
                 break;
             }
         }
-
     }
     iwq.output_to_file(dos, los);
     printf("Done reading traces, output saves to \n %s \n %s \n", tr_dat.c_str(), tr_lab.c_str());
