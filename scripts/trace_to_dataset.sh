@@ -8,6 +8,7 @@ GEN_DIR="$PWD/../src/data_generator"
 
 # Parse args from command line
 IW_SIZE=64
+MAX_INSTR=1000000
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -20,6 +21,11 @@ case $key in
     shift # past argument
     shift # past value
     ;;
+    -n|--number)
+    MAX_INSTR="$2"
+    shift # past argument
+    shift # past value
+    ;;    
     *)    # unknown option
     echo "Unkown option encounter: ${key} "
     exit 1
@@ -31,6 +37,7 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 echo "TRACE DIR      = ${TRACE_DIR}"
 echo "DATASET_DIR    = ${DATASET_DIR}"
 echo "INSTR WINDOW   = ${IW_SIZE}"
+echo "MAX INSTR NUMBER   = ${MAX_INSTR}"
 if [[ -n $1 ]]; then
     echo "Last line of file specified as non-opt/last argument:"
     tail -1 "$1"
@@ -62,7 +69,7 @@ for i in "${targets[@]}"
 do
     if [ -f "${i}" ]; then
         # -t: target(input), -o: output dir, -w: instruction window size
-       ./trpr.o -t ${i} -o ${DATASET_DIR} -w ${IW_SIZE}
+       ./trpr.o -t ${i} -o ${DATASET_DIR} -w ${IW_SIZE} -n ${MAX_INSTR}
     else
         echo "Error: ${i} doesn't exist..."
     fi
