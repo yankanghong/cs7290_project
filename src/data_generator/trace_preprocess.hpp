@@ -48,6 +48,8 @@
 // default instruction window size
 #define DEFAULT_IW_SIZE 100
 
+// default maximum number of instructions
+#define DEFAULT_MAX_INSTR 10000000
 
 // based Instruction type
 struct SINST {

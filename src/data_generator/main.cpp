@@ -19,21 +19,24 @@ int main(int argc, char **argv) {
     string out_dir = "./";
 
     uint instr_window_size(DEFAULT_IW_SIZE);
-
+    uint64_t max_num_instr(10000000);
     // get options from command line
     char c;
-    while ((c = getopt (argc, argv, "t:o:w:")) != -1) {
+    while ((c = getopt (argc, argv, "t:o:w:n:")) != -1) {
         switch(c) {
-            case 't':
+            case 't': // path to input trace
                 if(optarg) trace_path = string(optarg);
                 break;
-            case 'o':
+            case 'o': // output directory
                 if(optarg) out_dir = string(optarg);
                 if (out_dir.back() != '/') out_dir += '/';
                 break; 
-            case 'w':
+            case 'w': // instruction window size
                 if (optarg) instr_window_size = atoll(optarg);    
                 break;      
+            case 'n': // maximum number of instructions
+                if (optarg) max_num_instr = atoll(optarg);
+                break;
             default:
                 std::cerr<< "Unknown option -"<<c<<"\n";
                 abort();        
@@ -73,20 +76,17 @@ int main(int argc, char **argv) {
         
         mcnt++;
 
-        if ( (mcnt%100000 == 0) && mcnt) // output to file every 0.1M instructions
+        if ( ((mcnt%100000 == 0) || mcnt > max_num_instr) && mcnt) // output to file every 0.1M instructions
             iwq.output_to_file(dos, los); 
         
-        if (mcnt == 10000000) {
+        if (mcnt == max_num_instr) {
             lcnt ++;
-            std::cout << "Finish " << lcnt <<"0M instructions...\n";
+            std::cout << "Finish " << max_num_instr <<" instructions...\n";
             // print lwq content 
             // iwq.print_queue(); 
             // iwq.data_size(); 
             mcnt = 0;
-            if (lcnt == 1) {
-                std::cout << "Done with first "<< lcnt <<"0M instructions, exit...\n";
-                break;
-            }
+            break;
         }
     }
     
