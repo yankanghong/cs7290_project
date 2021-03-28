@@ -33,4 +33,20 @@ Notice: remember to perform **Trace download** first.
 * *OUTDATED* ~~If you want to download pre-generated dataset, run `get_dataset.sh`. Adjust what dataset to download by manipulating `dataset_download_list.txt`  
 Just access and download from [here](https://gtvault.sharepoint.com/sites/CS7290LoadStorePredictionProject/Shared%20Documents/dataset/)~~
 
+## Models
+
+### Provided models
+Models are located in the folder [models](./src/models). Currently supported models:
+
+| Model Name | Description  |
+| :------------: |:---------------:|  
+| SimSeq | A simple sequence to sequence model for dependency prediction. Utilize Encoder and Decoder architecture. Both encoder and decoder uses GRU | 
+
+
+### Training and Validation
+Go to the [src](./src) folder and run following command. By default, the script uses **SimSeq** model.
+```sh
+cd src/
+python3 main.py [--config ./configs/CONFIG_FILE]
+```
 
