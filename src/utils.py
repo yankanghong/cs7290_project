@@ -10,12 +10,15 @@ from torch.utils.data import DataLoader, Dataset
 
 import numpy as np
 
-# custom models
-from models import SimpleRNN
+# Tqdm progress bar
+from tqdm import tqdm, tqdm_notebook
 
+##########################################
+# Utility
+##########################################
 
 def usage(defaut_trace):
-    """ discarded usage function """
+    """ (Deprecated) usage function """
     print("Usage: ")
     print("       -t/--trace [trace file] , default trace file "+defaut_trace)
     print("       -m/--model [model name] , no default model ")
@@ -46,7 +49,6 @@ def parse_args(argv, df_trace_path):
 
     return (model_name, trace_path)
 
-
 class AverageMeter(object):
     """Computes and stores the average and current value"""
 
@@ -65,40 +67,91 @@ class AverageMeter(object):
         self.count += n
         self.avg = self.sum / self.count
 
-# def train(epoch, data_loader, model, optimizer, criterion):
-def train(epoch, data_loader):
-    """ train function """
-    # iter_time = AverageMeter()
-    # losses = AverageMeter()
-    # acc = AverageMeter()
 
-    for idx, (data, target) in enumerate(data_loader):
-        # start = time.time()
-        print("idx:",idx)
-        print(data)
-        print(target)
-        if (idx == 0):
-            break
-        # if torch.cuda.is_available():
-            # data = data.cuda()
-            # target = target.cuda()
+##########################################
+# Training functions 
+##########################################
 
-        # optimizer.zero_grad()  # clear prev gradient
-        # # print(data.shape)
-        # out = model.forward(data)
-        # loss = criterion.forward(out, target)
-        # loss.backward()
-        # optimizer.step()
+def train_simSeq(epoch, model, data_loader, optimizer, criterion, clip_th):
+    '''
+        Train function of simSeq.  
+        Args:
+            epoch_idx, model, data_loader, optimizer, criterion,
+            clip_th: clip threshold for grad norm
+    '''
+    model.train()
+    epoch_loss = 0
 
-        # batch_acc = accuracy(out, target)
+    # Get the progress bar for later modification
+    progress_bar = tqdm(data_loader, ascii=True)
 
-        # losses.update(loss, out.shape[0])
-        # acc.update(batch_acc, out.shape[0])
+    # loop over current batch
+    for idx, (data, target) in enumerate(progress_bar):
 
-        # iter_time.update(time.time() - start)
-        # if idx % 10 == 0:
-        #     print(('Epoch: [{0}][{1}/{2}]\t'
-        #            'Time {iter_time.val:.3f} ({iter_time.avg:.3f})\t'
-        #            'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-        #            'Prec @1 {top1.val:.4f} ({top1.avg:.4f})\t')
-        #           .format(epoch, idx, len(data_loader), iter_time=iter_time, loss=losses, top1=acc))
+        optimizer.zero_grad()
+
+        # FIXME: because the input_size for PC is too large for not server computing resource
+        #        do a modulo operation to reduce the PC
+        data = data % 100000
+        
+        # change to sequence first
+        data = data.transpose(1, 0)
+        target = target.transpose(1, 0)
+
+        output = model.forward(data, target)
+        # change into a row vector for calculating loss
+        target = target.reshape(-1)  # target = [seq_len * batch_size]
+        output = output.view(-1, output.shape[-1]) #output = [seq_len * batch_size, output_size]
+
+        loss = criterion(output, target)
+        loss.backward()
+
+        # gradient clip to prevent exploding gradient
+        torch.nn.utils.clip_grad_norm_(model.parameters(), clip_th)
+
+        optimizer.step()
+        epoch_loss += loss.item()
+        progress_bar.set_description_str("Train Batch: %d, Loss: %.4f" % ((idx), loss.item()))
+
+    return epoch_loss, epoch_loss / len(data_loader)
+
+
+##########################################
+# Evaluate functions
+##########################################
+def validate(epoch, model, data_loader, criterion):
+    '''
+        Validate function 
+        Args:
+            epoch_idx, model, data_loader, criterion
+    '''
+
+    model.eval()
+    epoch_loss = 0
+
+    # Get the progress bar for later modification
+    progress_bar = tqdm(data_loader, ascii=True)
+    with torch.no_grad():
+
+        # loop over current batch
+        for idx, (data, target) in enumerate(progress_bar):
+            # FIXME: because the input_size for PC is too large for not server computing resource
+            #        do a modulo operation to reduce the PC
+            data = data % 100000
+
+            # change to sequence first
+            data = data.transpose(1, 0)
+            target = target.transpose(1, 0)
+
+            # turn-off teacher forcing
+            output = model.forward(data, target, 0)
+            # change into a row vector for calculating loss
+            target = target.reshape(-1)  # target = [seq_len * batch_size]
+            output = output.view(-1, output.shape[-1]) #output = [seq_len * batch_size, output_size]
+
+            loss = criterion(output, target)
+
+            epoch_loss += loss.item()
+            progress_bar.set_description_str("Validate Batch: %d, Loss: %.4f" % ((idx), loss.item()))
+
+    return epoch_loss, epoch_loss / len(iterator)

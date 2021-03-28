@@ -10,10 +10,11 @@ import csv
 
 class CustomDataset(Dataset):
     """ custom dataset class to load data """
-    def __init__(self, datafname, labelfname):
+    def __init__(self, datafname, labelfname, iw_size=64):
         self._data_fname = datafname
         self._label_fname = labelfname
         self._total_data = 0
+        self._iw_size = iw_size
         with open(datafname, "rb") as f:
             self._total_data = len(f.readlines()) - 1
 
@@ -35,3 +36,6 @@ class CustomDataset(Dataset):
 
     def __len__(self):
         return self._total_data
+
+    def get_cls_num_list(self):
+        return np.zeros(self._iw_size)
