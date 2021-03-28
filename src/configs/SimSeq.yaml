@@ -2,17 +2,21 @@ Train:
   batch_size: 32
   learning_rate: 0.02
   reg: 0.0001
-  epochs: 5
+  epochs: 3
   clip:  0.5 # clip threshold
 
 network:
   model: "SimSeq"
   save_best: True
 
-input:
-  data: ../data/dataset/600.perlbench_s-210B.champsimtrace.dat 
-  label: ../data/dataset/600.perlbench_s-210B.champsimtrace.lab 
+dataset:
   shuffle: False
+  # taining set
+  train_data: ../data/dataset/600.perlbench_s-210B.champsimtrace.dat 
+  train_label: ../data/dataset/600.perlbench_s-210B.champsimtrace.lab 
+  # validation set
+  valid_data: ../data/dataset/600.perlbench_s-210B.champsimtrace.dat 
+  valid_label: ../data/dataset/600.perlbench_s-210B.champsimtrace.lab   
 
 loss:
   loss_type: CE # NLL, CE or Focal

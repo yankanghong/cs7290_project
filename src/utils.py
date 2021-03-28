@@ -51,7 +51,6 @@ def parse_args(argv, df_trace_path):
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
-
     def __init__(self):
         self.reset()
 
@@ -68,6 +67,30 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
+def accuracy(output, target):
+    '''
+        Computes the accuracy given output and target
+        Args:
+            output: a tensor with size (batch_size, # of classes)
+            target: a tensor with size (batch_size, 1)
+    '''
+    batch_size = target.shape[0]
+
+    _, pred = torch.max(output, dim=-1)
+
+    correct = pred.eq(target).sum() * 1.0
+
+    acc = correct / batch_size
+
+    return acc
+
+
+def epoch_time(start_time, end_time):
+    elapsed_time = end_time - start_time
+    elapsed_mins = int(elapsed_time / 60)
+    elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
+    return elapsed_mins, elapsed_secs
+    
 ##########################################
 # Training functions 
 ##########################################
@@ -128,6 +151,7 @@ def validate(epoch, model, data_loader, criterion):
 
     model.eval()
     epoch_loss = 0
+    acc = AverageMeter()
 
     # Get the progress bar for later modification
     progress_bar = tqdm(data_loader, ascii=True)
@@ -148,10 +172,13 @@ def validate(epoch, model, data_loader, criterion):
             # change into a row vector for calculating loss
             target = target.reshape(-1)  # target = [seq_len * batch_size]
             output = output.view(-1, output.shape[-1]) #output = [seq_len * batch_size, output_size]
+            
+            batch_acc = accuracy(output, target)
+            acc.update(batch_acc, target.shape[0])
 
             loss = criterion(output, target)
-
             epoch_loss += loss.item()
-            progress_bar.set_description_str("Validate Batch: %d, Loss: %.4f" % ((idx), loss.item()))
 
-    return epoch_loss, epoch_loss / len(iterator)
+            progress_bar.set_description_str("Validate Batch: %d, Loss: %.4f, Batch Acc: %.4f" % ((idx), loss.item(), batch_acc))
+
+    return epoch_loss, epoch_loss / len(data_loader), acc.avg

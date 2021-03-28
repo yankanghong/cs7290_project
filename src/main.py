@@ -3,6 +3,7 @@ import argparse
 import time
 import sys
 import copy
+import math 
 
 # Pytorch package
 import torch
@@ -38,18 +39,23 @@ def main():
     # helpful for checking input arguments
     for arg in vars(args):
         print (arg, getattr(args, arg))
+    exit(1)
     '''
     
-    ###############################
+    ##########################################
     # load dataset
-    ###############################
-    train_set = CustomDataset(args.data, args.label)
+    ##########################################
+    IW_SIZE = 64  # define the sequence length
+    train_set = CustomDataset(args.train_data, args.train_label, iw_size=IW_SIZE)
+    valid_set = CustomDataset(args.valid_data, args.valid_label, iw_size=IW_SIZE)
     train_loader = DataLoader(train_set, batch_size=args.batch_size, 
-                        shuffle=args.shuffle, num_workers=2)
-    
-    ###############################
+                        shuffle=args.shuffle)
+    valid_loader = DataLoader(valid_set, batch_size=args.batch_size,
+                              shuffle=args.shuffle)
+
+    ##########################################
     # declare model
-    ###############################
+    ##########################################
     # INPUT_SIZE = 2**30 # equal to address space, for PC
     INPUT_SIZE = 100000 # equal to address space, for PC
     OUTPUT_SIZE = 2
@@ -76,9 +82,9 @@ def main():
     optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer)
 
-    ###############################
+    ##########################################
     # loss function
-    ###############################
+    ##########################################
     if (args.loss_type == "CE"):
         criterion = nn.CrossEntropyLoss()
     elif (args.loss_type == "Focal"): # Focal loss
@@ -96,41 +102,44 @@ def main():
         print("Unknown loss type: ", args.loss_type)
         exit(1)
 
-    ###############################
-    # train loop
-    ###############################
-    best_eval_loss = 0.0
-    eval_loss = 0.0
+    ##########################################
+    # Epoch loop
+    ##########################################
+    best_val_loss = 10000.0
+    best_val_acc = 0.0
     best_model = None
     for epoch_idx in range(args.epochs):
         print("-----------------------------------")
         print("Epoch %d" % (epoch_idx))
         print("-----------------------------------")
         start_time = time.time()
+
         # train loop
         train_loss = None
         if (args.model == "SimSeq"):
             train_loss, avg_train_loss = train_simSeq(epoch_idx, model, train_loader, optimizer, criterion, args.clip)
-        scheduler.step(train_loss)
+        scheduler.step(train_loss) # adjust learning rate
 
         # validation loop
-        val_loss, avg_val_loss = validate(model, valid_loader, criterion)
+        val_loss, avg_val_loss, avg_acc = validate(epoch_idx, model, valid_loader, criterion)
         
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
 
-        if (val_loss < best_val_loss):
+        if (val_loss < best_val_loss and avg_acc > best_val_acc ):
             best_val_loss = val_loss
+            best_val_acc = avg_acc
             best_model = copy.deepcopy(model)
 
-        print(f'Epoch: {epoch+1:02} | Time: {epoch_mins}m {epoch_secs}s')
+        print(f'Epoch: {epoch_idx+1:02} | Time: {epoch_mins}m {epoch_secs}s')
         print(f'\tTrain Loss: {train_loss:.3f} | Train PPL: {math.exp(train_loss):7.3f}')
-        print(f'\t Validate Loss: {val_loss:.3f} |  Validate PPL: {math.exp(val_loss):7.3f}')
+        print(f'\tValidate Loss: {val_loss:.3f} | Validate PPL: {math.exp(val_loss):7.3f} | Validate Accuracy: {avg_acc:.4f}')
 
     if (args.save_best):
         torch.save(best_model.state_dict(), './checkpoints/' +
                    args.model.lower() + '.pth')
 
+    print("Pytorch Done...")
 
 
 
