@@ -51,6 +51,9 @@
 // default maximum number of instructions
 #define DEFAULT_MAX_INSTR 10000000
 
+// train data ratio: 80% of total instruction
+#define TRAIN_DATA_RATIO 0.8
+
 // based Instruction type
 struct SINST {
     // instruction pointer or PC (Program Counter)

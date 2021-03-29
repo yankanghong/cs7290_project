@@ -12,11 +12,11 @@ network:
 dataset:
   shuffle: False
   # taining set
-  train_data: ../data/dataset/600.perlbench_s-210B.champsimtrace.dat 
-  train_label: ../data/dataset/600.perlbench_s-210B.champsimtrace.lab 
+  train_data: ../data/dataset/train/600.perlbench_s-210B.champsimtrace.dat 
+  train_label: ../data/dataset/train/600.perlbench_s-210B.champsimtrace.lab 
   # validation set
-  valid_data: ../data/dataset/600.perlbench_s-210B.champsimtrace.dat 
-  valid_label: ../data/dataset/600.perlbench_s-210B.champsimtrace.lab   
+  valid_data: ../data/dataset/validate/600.perlbench_s-210B.champsimtrace.dat 
+  valid_label: ../data/dataset/validate/600.perlbench_s-210B.champsimtrace.lab   
 
 loss:
   loss_type: CE # NLL, CE or Focal

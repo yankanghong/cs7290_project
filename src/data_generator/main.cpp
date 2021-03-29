@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     string out_dir = "./";
 
     uint instr_window_size(DEFAULT_IW_SIZE);
-    uint64_t max_num_instr(10000000);
+    uint64_t max_num_instr(100000); // 0.1M
     // get options from command line
     char c;
     while ((c = getopt (argc, argv, "t:o:w:n:")) != -1) {
@@ -45,8 +45,12 @@ int main(int argc, char **argv) {
 
     string trace_name(trace_path.substr(trace_path.find_last_of('/')+1));  
     std::cout << "Transforming trace: " << trace_name <<"\n";
-    string tr_dat = out_dir+trace_name.substr(0, trace_name.find_last_of('.')) + ".dat";
-    string tr_lab = out_dir+trace_name.substr(0, trace_name.find_last_of('.')) + ".lab";
+    // training data
+    string tr_dat = out_dir+"train/"+trace_name.substr(0, trace_name.find_last_of('.')) + ".dat";
+    string tr_lab = out_dir+"train/"+trace_name.substr(0, trace_name.find_last_of('.')) + ".lab";
+    // validation data
+    string va_dat = out_dir+"validate/"+trace_name.substr(0, trace_name.find_last_of('.')) + ".dat";
+    string va_lab = out_dir+"validate/"+trace_name.substr(0, trace_name.find_last_of('.')) + ".lab";
     std::cout << "Output directory " << out_dir <<"\n";
 
     string gz_command = "xz -dc " + trace_path;
@@ -54,9 +58,12 @@ int main(int argc, char **argv) {
     srand(time(NULL));
 
     // output file
-    std::ofstream dos, los;
-    dos.open(tr_dat, std::ofstream::out | std::ios::binary);
-    los.open(tr_lab, std::ofstream::out | std::ios::binary);
+    std::ofstream tr_dos, tr_los;
+    std::ofstream va_dos, va_los;
+    tr_dos.open(tr_dat, std::ofstream::out | std::ios::binary);
+    tr_los.open(tr_lab, std::ofstream::out | std::ios::binary);
+    va_dos.open(va_dat, std::ofstream::out | std::ios::binary);
+    va_los.open(va_lab, std::ofstream::out | std::ios::binary);
 
     FILE *trace_file = popen( gz_command.c_str() , "r" );
     INSTRUCTION trace_instr;
@@ -76,8 +83,12 @@ int main(int argc, char **argv) {
         
         mcnt++;
 
-        if ( ((mcnt%100000 == 0) || mcnt > max_num_instr) && mcnt) // output to file every 0.1M instructions
-            iwq.output_to_file(dos, los); 
+        if ( (mcnt%10000 == 0) && mcnt) {// output to file every 0.01M instructions
+            if (mcnt < TRAIN_DATA_RATIO*max_num_instr)
+                iwq.output_to_file(tr_dos, tr_los); 
+            else
+                iwq.output_to_file(va_dos, va_los); 
+        }
         
         if (mcnt == max_num_instr) {
             lcnt ++;
@@ -90,11 +101,13 @@ int main(int argc, char **argv) {
         }
     }
     
-    iwq.output_to_file(dos, los);
+    iwq.output_to_file(va_dos, va_los);
     printf("Done reading traces, output saves to \n\t%s \n\t%s \n", tr_dat.c_str(), tr_lab.c_str());
     pclose(trace_file);
-    dos.close();
-    los.close();
+    tr_dos.close();
+    va_dos.close();
+    tr_los.close();
+    va_los.close();
     
     return 0;
 }

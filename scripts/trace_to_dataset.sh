@@ -52,9 +52,10 @@ targets=(
 
 
 ## Start transform
-if [ ! -d ${DATASET_DIR} ]; then
+if [ ! -d ${DATASET_DIR}/train ]; then
     echo "Create ${DATASET_DIR} directory..."
-    mkdir -p ${DATASET_DIR}
+    mkdir -p ${DATASET_DIR}/train
+    mkdir -p ${DATASET_DIR}/validate
 fi
 
 # Compile trace transformer
