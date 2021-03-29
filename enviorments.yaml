@@ -1,0 +1,10 @@
+name: lsp_env
+channels:
+  - defaults
+dependencies:
+  - python=3.7.10
+  - numpy
+  - pyyaml
+  - matplotlib
+  - tqdm=4.59.0
+  - pandas=1.2.3

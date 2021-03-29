@@ -2,8 +2,24 @@
 
 Some resources: https://github.com/ChampSim/ChampSim
 
-### Dependency
-Python 3.7, PyTorch >= 1.7, torchvision >= 0.8
+## Environment
+Use with anaconda or miniconda, run following command to create a virtual environment for development
+```sh
+conda env create -f environment.yaml
+conda activate lsp_env
+```
+
+Install Pytorch (**after activate your virtual env**): checkout this [page](https://pytorch.org/) for the installation. Example command for Linux: 
+```sh
+# Get latest version w/o CUDA
+conda install pytorch torchvision cpuonly -c pytorch
+# Get old version w/o CUDA
+conda install pytorch==1.7.1 torchvision==0.8.2 cpuonly -c pytorch
+# Get old version with CUDA 10.2
+conda install pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=10.2 -c pytorch
+
+```
+
 
 ## Data Preparation 
 
