@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
     FILE *trace_file = popen( gz_command.c_str() , "r" );
     INSTRUCTION trace_instr;
     uint instr_size = sizeof(SINST);
-    int lcnt(0), mcnt(0);
+    uint64_t lcnt(0), mcnt(0);
 
     // The queue class 
     IWQ iwq(instr_window_size);
