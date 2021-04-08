@@ -140,8 +140,9 @@ def train_simSeq(epoch, model, data_loader, optimizer, criterion, clip_th):
 
 
 ##########################################
-# Evaluate functions
+# Evaluate function
 ##########################################
+
 def validate(epoch, model, data_loader, criterion):
     '''
         Validate function 
@@ -182,3 +183,4 @@ def validate(epoch, model, data_loader, criterion):
             progress_bar.set_description_str("Validate Batch: %d, Loss: %.4f, Batch Acc: %.4f" % ((idx), loss.item(), batch_acc))
 
     return epoch_loss, epoch_loss / len(data_loader), acc.avg
+

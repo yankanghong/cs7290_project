@@ -4,6 +4,7 @@ import time
 import sys
 import copy
 import math 
+import os
 
 # Pytorch package
 import torch
@@ -19,8 +20,14 @@ from utils import *
 from dataset import CustomDataset
 from models.simSeq import EncoderGRU, DecoderGRU, SimSeq
 
+##########################################
+# Args setting
+##########################################
 parser = argparse.ArgumentParser(prog=sys.argv[0], description='Memory dependency prediction networks')
-parser.add_argument('--config', default='./configs/SimSeq.yaml', help="specifiy the config file")
+parser.add_argument('--config', default='./configs/SimSeq.yaml', metavar='CONFIG_FILE' ,
+                    help="Specifiy the config file. Default set to SimSeq.yaml")
+parser.add_argument('--mode', default='train', metavar="MODE",
+                    help="Two modes available: train or test. If set to test, specify the path to weights in config file. Default: train")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -76,11 +83,16 @@ def main():
         print("Model not defined!")
         exit(1)
 
-    ###############################
-    # declare optimizer
-    ###############################
-    optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer)
+    # check if pre-trained model exists when test mode
+    if (args.mode.lower() == 'test'):
+        if (not os.path.exists(args.pt_path)):
+            print("Pre-trained model '"+args.pt_path+"' not exists, please check yaml file for 'pt_path'")
+            exit(1)
+        model.load_state_dict(torch.load(args.pt_path)) # load pre-train model
+    else:
+        # declare optimizer
+        optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer)
 
     ##########################################
     # loss function
@@ -108,6 +120,7 @@ def main():
     best_val_loss = 10000.0
     best_val_acc = 0.0
     best_model = None
+    
     for epoch_idx in range(args.epochs):
         print("-----------------------------------")
         print("Epoch %d" % (epoch_idx))
@@ -116,9 +129,9 @@ def main():
 
         # train loop
         train_loss = None
-        if (args.model == "SimSeq"):
+        if ( args.mode == 'train' and args.model == "SimSeq"):
             train_loss, avg_train_loss = train_simSeq(epoch_idx, model, train_loader, optimizer, criterion, args.clip)
-        scheduler.step(train_loss) # adjust learning rate
+            scheduler.step(train_loss) # adjust learning rate
 
         # validation loop
         val_loss, avg_val_loss, avg_acc = validate(epoch_idx, model, valid_loader, criterion)
@@ -132,10 +145,10 @@ def main():
             best_model = copy.deepcopy(model)
 
         print(f'Epoch: {epoch_idx+1:02} | Time: {epoch_mins}m {epoch_secs}s')
-        print(f'\tTrain Loss: {train_loss:.3f} | Train PPL: {math.exp(train_loss):7.3f}')
+        if (args.mode == 'train'): print(f'\tTrain Loss: {train_loss:.3f} | Train PPL: {math.exp(train_loss):7.3f}')
         print(f'\tValidate Loss: {val_loss:.3f} | Validate PPL: {math.exp(val_loss):7.3f} | Validate Accuracy: {avg_acc:.4f}')
 
-    if (args.save_best):
+    if (args.mode=='train' and args.save_best):
         torch.save(best_model.state_dict(), './checkpoints/' +
                    args.model.lower() + '.pth')
 

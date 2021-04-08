@@ -5,11 +5,14 @@ Train:
   epochs: 3
   clip:  0.5 # clip threshold
 
-network:
+Network:
   model: "SimSeq"
-  save_best: True
+  save_best: True # save the best model during training
 
-dataset:
+Pre-trained:
+  pt_path: checkpoints/simseq.pth # path to pre-train model
+
+Dataset:
   shuffle: False
   # taining set
   train_data: ../data/dataset/train/600.perlbench_s-210B.champsimtrace.dat 
@@ -18,6 +21,6 @@ dataset:
   valid_data: ../data/dataset/validate/600.perlbench_s-210B.champsimtrace.dat 
   valid_label: ../data/dataset/validate/600.perlbench_s-210B.champsimtrace.lab   
 
-loss:
+Loss:
   loss_type: CE # NLL, CE or Focal
   reweight: False  # True with Focal Loss
