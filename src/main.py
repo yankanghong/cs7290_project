@@ -139,14 +139,14 @@ def main():
         end_time = time.time()
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
 
-        if (val_loss < best_val_loss and avg_acc > best_val_acc ):
-            best_val_loss = val_loss
+        if (avg_val_loss < best_val_loss and avg_acc > best_val_acc):
+            best_val_loss = avg_val_loss
             best_val_acc = avg_acc
             best_model = copy.deepcopy(model)
 
         print(f'Epoch: {epoch_idx+1:02} | Time: {epoch_mins}m {epoch_secs}s')
-        if (args.mode == 'train'): print(f'\tTrain Loss: {train_loss:.3f} | Train PPL: {math.exp(train_loss):7.3f}')
-        print(f'\tValidate Loss: {val_loss:.3f} | Validate PPL: {math.exp(val_loss):7.3f} | Validate Accuracy: {avg_acc:.4f}')
+        if (args.mode == 'train'): print(f'\tTrain Loss: {avg_train_loss:.3f} | Train PPL: {math.exp(train_loss):7.3f}')
+        print(f'\tValidate Loss: {val_loss:.3f} | Validate PPL: {math.exp(avg_val_loss):7.3f} | Validate Accuracy: {avg_acc:.4f}')
 
     if (args.mode=='train' and args.save_best):
         torch.save(best_model.state_dict(), './checkpoints/' +
