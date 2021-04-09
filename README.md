@@ -58,6 +58,9 @@ Models are located in the folder [models](./src/models). Currently supported mod
 | :------------: |:---------------:|  
 | SimSeq | A simple sequence to sequence model for dependency prediction. Utilize Encoder and Decoder architecture. Both encoder and decoder uses GRU | 
 
+##### SimSeq model
+* Model architecture:
+![](./img/simSeq.png)
 
 ### Training and Validation
 Go to the [src](./src) folder and run following command. By default, the script uses **SimSeq** model and **train** mode. Use `-help` to check usage of main.py
