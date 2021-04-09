@@ -55,9 +55,9 @@ def main():
     IW_SIZE = 64  # define the sequence length
     train_set = CustomDataset(args.train_data, args.train_label, iw_size=IW_SIZE)
     valid_set = CustomDataset(args.valid_data, args.valid_label, iw_size=IW_SIZE)
-    train_loader = DataLoader(train_set, batch_size=args.batch_size, 
+    train_loader = DataLoader(train_set, batch_size=args.tra_batch_size, 
                         shuffle=args.shuffle)
-    valid_loader = DataLoader(valid_set, batch_size=args.batch_size,
+    valid_loader = DataLoader(valid_set, batch_size=args.val_batch_size,
                               shuffle=args.shuffle)
 
     ##########################################
@@ -85,6 +85,8 @@ def main():
 
     # check if pre-trained model exists when test mode
     if (args.mode.lower() == 'test'):
+        # set epoch to 1 if in test mode
+        args.epoch = 1
         if (not os.path.exists(args.pt_path)):
             print("Pre-trained model '"+args.pt_path+"' not exists, please check yaml file for 'pt_path'")
             exit(1)
@@ -145,8 +147,8 @@ def main():
             best_model = copy.deepcopy(model)
 
         print(f'Epoch: {epoch_idx+1:02} | Time: {epoch_mins}m {epoch_secs}s')
-        if (args.mode == 'train'): print(f'\tTrain Loss: {avg_train_loss:.3f} | Train PPL: {math.exp(train_loss):7.3f}')
-        print(f'\tValidate Loss: {val_loss:.3f} | Validate PPL: {math.exp(avg_val_loss):7.3f} | Validate Accuracy: {avg_acc:.4f}')
+        if (args.mode == 'train'): print(f'\tTrain Loss: {avg_train_loss:.3f} | Train PPL: {math.exp(avg_train_loss):7.3f}')
+        print(f'\tValidate Loss: {avg_val_loss:.3f} | Validate PPL: {math.exp(avg_val_loss):7.3f} | Validate Accuracy: {avg_acc:.4f}')
 
     if (args.mode=='train' and args.save_best):
         torch.save(best_model.state_dict(), './checkpoints/' +
