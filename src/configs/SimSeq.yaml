@@ -1,8 +1,8 @@
 Train:
-  batch_size: 32
-  learning_rate: 0.02
+  batch_size: 64
+  learning_rate: 0.01
   reg: 0.0001
-  epochs: 3
+  epochs: 10
   clip:  0.5 # clip threshold
 
 Network:
@@ -15,11 +15,13 @@ Pre-trained:
 Dataset:
   shuffle: False
   # taining set
-  train_data: ../data/dataset/train/600.perlbench_s-210B.champsimtrace.dat 
-  train_label: ../data/dataset/train/600.perlbench_s-210B.champsimtrace.lab 
+  # train_data: ../data/dataset/train/600.perlbench_s-210B.champsimtrace.dat 
+  # train_label: ../data/dataset/train/600.perlbench_s-210B.champsimtrace.lab 
+  train_data: ../data/dataset/train/641.leela_s-800B.champsimtrace.dat 
+  train_label: ../data/dataset/train/641.leela_s-800B.champsimtrace.lab 
   # validation set
-  valid_data: ../data/dataset/validate/600.perlbench_s-210B.champsimtrace.dat 
-  valid_label: ../data/dataset/validate/600.perlbench_s-210B.champsimtrace.lab   
+  valid_data: ../data/dataset/validate/641.leela_s-800B.champsimtrace.dat 
+  valid_label: ../data/dataset/validate/641.leela_s-800B.champsimtrace.lab   
 
 Loss:
   loss_type: CE # NLL, CE or Focal
