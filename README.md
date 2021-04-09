@@ -54,8 +54,10 @@ Just access and download from [here](https://gtvault.sharepoint.com/sites/CS7290
 Go to the [src](./src) folder and run following command. By default, the script uses **SimSeq** model and **train** mode. Use `-help` to check usage of main.py
 ```sh
 cd src/
-python3 main.py [--config ./configs/CONFIG_FILE] [--mode ./checkpoints/pre_train_model]
+python3 main.py [--config ./configs/CONFIG_FILE] [--mode MODE]
 ```
+`MODE` can be `test` or `train`
+
 ### Provided models
 Models are located in the folder [models](./src/models). Currently supported models:
 
